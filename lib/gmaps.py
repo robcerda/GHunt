@@ -3,6 +3,7 @@ import json
 import re
 import time
 from seleniumwire import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -57,7 +58,7 @@ def scrape(gaiaID, client, cookies, cfg):
         tmprinter.out("")
         print("=> No reviews")
         return False
-        
+
     chrome_options = Options()
     chrome_options.add_argument('--log-level=3')
     chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -70,7 +71,7 @@ def scrape(gaiaID, client, cookies, cfg):
     tmprinter.out("Starting browser...")
 
     driverpath = get_driverpath()
-    driver = webdriver.Chrome(executable_path=driverpath, seleniumwire_options=options, options=chrome_options)
+    driver = webdriver.Chrome(ChromeDriverManager().install())
     wait = WebDriverWait(driver, 15)
 
     tmprinter.out("Setting cookies...")
@@ -80,7 +81,7 @@ def scrape(gaiaID, client, cookies, cfg):
 
     tmprinter.out("Fetching reviews page...")
     driver.get(base_url)
-    
+
     wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'div.section-scrollbox')))
     scrollbox = driver.find_element_by_css_selector('div.section-scrollbox')
 
@@ -151,7 +152,7 @@ def translate_confidence(percents):
         return "Extremely low"
 
 def get_confidence(data, cfg):
-    
+
     geolocator = Nominatim(user_agent="nominatim")
     tmprinter = TMPrinter()
     radius = cfg["gmaps_radius"]
@@ -215,7 +216,7 @@ def get_confidence(data, cfg):
 
     #for hash,loc in locations.items():
     #    print(f"{hash} => {len(loc['locations'])} ({int(loc['score'])/40*100})")
-        
+
     panels = sorted(set([loc["score"] for loc in locations.values()]), reverse=True)
 
     maxscore = sum([p*score_steps for p in range(1,score_steps+1)])

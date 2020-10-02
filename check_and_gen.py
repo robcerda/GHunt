@@ -1,5 +1,6 @@
 import httpx
 from seleniumwire import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from config import cfg
 from lib.utils import *
@@ -71,7 +72,8 @@ options = {
 tmprinter.out("Starting browser...")
 
 driverpath = get_driverpath()
-driver = webdriver.Chrome(executable_path=driverpath, seleniumwire_options=options, options=chrome_options)
+driver = webdriver.Chrome(ChromeDriverManager().install())
+#driver = webdriver.Chrome(executable_path=driverpath, seleniumwire_options=options, options=chrome_options)
 
 tmprinter.out("Setting cookies...")
 driver.get("https://hangouts.google.com/robots.txt")
